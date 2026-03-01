@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Animation </title>
+    <style>
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f0f0f0;
+        }
+        header {
+            background-color: #0099cc;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        nav {
+            position: sticky;
+            top: 0;
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 15px;
+            display: block;
+            transition: 0.3s;
+        }
+        nav a:hover {
+            background-color: #555;
+        }
+        section {
+            padding: 50px 20px;
+            min-height: 400px;
+            border-bottom: 1px solid #ccc;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        
+        #cbg, #canvas {
+            margin: 0 auto;
+            display: block;
+            border-radius: 15px;
+            background-color: #ffccd9;
+            border: 1px solid gray;
+        }
+
+        /* ---- Floating Clouds ---- */
+        .cloudCanvas {
+            display: block;
+            margin: 0 auto;
+            border: 1px solid gray;
+            border-radius: 15px;
+            background-color: #87ceeb; /* light sky blue */
+        }
+
+        /* Color-changing button */
+        .btn {
+            background-color: #0099cc;
+            color: white;
+            padding: 15px 25px;
+            margin: 10px;
+            border: none;
+            border-radius: 8px;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #ff6600;
+            transform: scale(1.1);
+        }
+
+        /* Spinning logo */
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+            background-color: #ffcc00;
+            border-radius: 50%;
+            animation: spin 5s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Typing text */
+        #typing {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            min-height: 30px;
+        }
+
+        /* Snow Canvas Dark Background */
+        #snowCanvas {
+            display: block;
+            margin: 0 auto;
+            border-radius: 15px;
+            background-color: #111; /* dark background */
+            border: 1px solid #555;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>My Animation Portfolio</h1>
+    </header>
+
+    <nav>
+        <a href="#bouncing">Bouncing Balls</a>
+        <a href="#clouds">Floating Clouds</a>
+        <a href="#typingText">Typing Text</a>
+        <a href="#buttons">Buttons</a>
+        <a href="#logo">Spinning Logo</a>
+        <a href="#snow">Snow/Stars</a>
+    </nav>
+
+    
+    <section id="bouncing">
+        <h2>Bouncing Balls</h2>
+        
+        <canvas id="canvas" width="640" height="350"></canvas>
+        <p>Click on the balls to pop them!</p>
+    </section>
+
+    <section id="clouds">
+        <h2>Floating Clouds</h2>
+        <canvas id="cloudCanvas" class="cloudCanvas" width="640" height="350"></canvas>
+        <div class="cloud" style="animation-duration:25s; top:50px;"></div>
+        <div class="cloud" style="animation-duration:30s; top:80px;"></div>
+    </section>
+
+    
+    <section id="typingText">
+        <h2>Typing Text Effect</h2>
+        <div id="typing"></div>
+    </section>
+
+    
+    <section id="buttons">
+        <h2>Hover Buttons</h2>
+        <button class="btn">Click Me</button>
+        <button class="btn">Hover Me</button>
+        <button class="btn">Press Me</button>
+    </section>
+
+    
+    <section id="logo">
+        <h2>Spinning Logo</h2>
+        <div class="logo"></div>
+    </section>
+
+    
+    <section id="snow">
+        <h2>Falling Snow / Stars</h2>
+        <canvas id="snowCanvas" width="640" height="350"></canvas>
+        <p>JavaScript Canvas animation of falling snow or stars.</p>
+    </section>
+
+    <script>
+       
+        const text = "Welcome to my Animation Portfolio!";
+        let i = 0;
+        function typeWriter() {
+            if (i < text.length) {
+                document.getElementById("typing").innerHTML += text.charAt(i);
+                i++;
+                setTimeout(typeWriter, 100);
+            }
+        }
+        typeWriter();
+
+        
+        const snowCanvas = document.getElementById("snowCanvas");
+        const snowCtx = snowCanvas.getContext("2d");
+        const snowflakes = [];
+        for(let j=0; j<50; j++) {
+            snowflakes.push({
+                x: Math.random()*snowCanvas.width,
+                y: Math.random()*snowCanvas.height,
+                r: Math.random()*3+1,
+                d: Math.random()*2
+            });
+        }
+        function drawSnow() {
+            snowCtx.clearRect(0,0,snowCanvas.width,snowCanvas.height);
+            snowCtx.fillStyle = "lightblue"; // change snow color
+            snowCtx.beginPath();
+            for(let f of snowflakes) {
+                snowCtx.moveTo(f.x,f.y);
+                snowCtx.arc(f.x,f.y,f.r,0,Math.PI*2,true);
+            }
+            snowCtx.fill();
+            moveSnow();
+        }
+        function moveSnow() {
+            for(let f of snowflakes){
+                f.y += f.d;
+                if(f.y>snowCanvas.height){ f.y=0; f.x=Math.random()*snowCanvas.width; }
+            }
+        }
+        setInterval(drawSnow, 50);
+
+        
+        const cloudCanvas = document.getElementById("cloudCanvas");
+        const cloudCtx = cloudCanvas.getContext("2d");
+        const clouds = [];
+        for (let c=0; c<5; c++) {
+            clouds.push({
+                x: Math.random()*cloudCanvas.width,
+                y: Math.random()*cloudCanvas.height,
+                radius: Math.random()*30 + 20,
+                speedX: Math.random()*1 + 0.5,
+                speedY: Math.random()*0.3
+            });
+        }
+        function drawClouds() {
+            cloudCtx.clearRect(0,0,cloudCanvas.width,cloudCanvas.height);
+            cloudCtx.fillStyle = "white";
+            cloudCtx.beginPath();
+            for (let c of clouds) {
+                cloudCtx.moveTo(c.x, c.y);
+                cloudCtx.arc(c.x, c.y, c.radius, 0, Math.PI*2);
+            }
+            cloudCtx.fill();
+            moveClouds();
+        }
+        function moveClouds() {
+            for (let c of clouds) {
+                c.x += c.speedX;
+                c.y += c.speedY;
+                if(c.x - c.radius > cloudCanvas.width) { c.x = -c.radius; c.y = Math.random()*cloudCanvas.height; }
+                if(c.y - c.radius <0 || c.y+c.radius>cloudCanvas.height) { c.speedY=-c.speedY; }
+            }
+        }
+        setInterval(drawClouds, 30);
+
+        // ===== Bouncing Balls =====
+        var canvas = document.getElementById('canvas'),
+            ctx = canvas.getContext('2d');
+        var N = 5, N_remaining=N, balls=[], xLimit=canvas.width, yLimit=canvas.height;
+        var maxVelocity=2, minVelocity=1, maxRadius=25, minRadius=15, gOver=false;
+        var pop = document.createElement("AUDIO");
+        pop.setAttribute("src","pop.wav");
+
+        class Ball {
+            constructor(x, y, radius, vX, vY, color) {
+                this.x=x; this.y=y; this.radius=radius; this.vX=vX; this.vY=vY; this.color=color;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.strokeStyle="gray"; ctx.fillStyle=this.color;
+                ctx.shadowColor="#000"; ctx.shadowBlur=1;
+                ctx.arc(this.x,this.y,this.radius,0,2*Math.PI);
+                ctx.fill(); ctx.stroke();
+            }
+            update() {
+                this.x+=this.vX;
+                if(this.x<=this.radius || this.x>=xLimit-this.radius) this.vX=-this.vX;
+                this.y+=this.vY;
+                if(this.y<=this.radius || this.y>=yLimit-this.radius) this.vY=-this.vY;
+            }
+            burst(){pop.play(); this.radius=0;}
+        }
+        function getX(){return Math.random()*(xLimit-2*minRadius)+minRadius;}
+        function getY(){return Math.random()*(yLimit-2*minRadius)+minRadius;}
+        function getXVel(){return Math.random()*(maxVelocity-minVelocity)+minVelocity;}
+        function getYVel(){return Math.random()*(maxVelocity-minVelocity)+minVelocity;}
+        function getRadius(){return Math.random()*(maxRadius-minRadius)+minRadius;}
+        function getColor(){return `hsl(${Math.random()*360},70%,60%)`; }
+        function startGame(){for(var i=0;i<N;i++){balls.push(new Ball(getX(),getY(),getRadius(),getXVel(),getYVel(),getColor()));} window.requestAnimationFrame(gameLoop);}
+        function drawBalls(){for(var i=0;i<N_remaining;i++){balls[i].draw();}}
+        function updateBalls(){ctx.clearRect(0,0,canvas.width,canvas.height); for(var i=0;i<N_remaining;i++){balls[i].update();}}
+        function handleClick(e){var mousePos=getMousePos(canvas,e); var mouseX=mousePos.x; var mouseY=mousePos.y; for(var i=balls.length-1;i>=0;i--){var bxl=balls[i].x-balls[i].radius,bxr=balls[i].x+balls[i].radius,byt=balls[i].y-balls[i].radius,byb=balls[i].y+balls[i].radius; if(mouseX>=bxl && mouseX<=bxr && mouseY>=byt && mouseY<=byb){balls[i].burst(); balls.splice(i,1); N_remaining--; if(N_remaining<=0) gOver=true;}}}
+        canvas.addEventListener("mousedown",handleClick,false);
+        function getMousePos(canvas,evt){var obj=canvas,top=0,left=0; while(obj && obj.tagName!='BODY'){top+=obj.offsetTop; left+=obj.offsetLeft; obj=obj.offsetParent;} return {x:evt.clientX-left+window.pageXOffset, y:evt.clientY-top+window.pageYOffset};}
+        function gameOver(){ctx.clearRect(0,0,canvas.width,canvas.height); ctx.font="55px sans"; ctx.fillStyle="#009999"; ctx.fillText("GAME OVER",(canvas.width/2)-150,(canvas.height/2)-20); ctx.fillStyle="#f00"; ctx.fillText("Balls Popped = "+(N-N_remaining),(canvas.width/2)-140,(canvas.height/2)+40);}
+        function gameLoop(){updateBalls(); drawBalls(); if(!gOver){window.requestAnimationFrame(gameLoop);} else{gameOver();}}
+        startGame();
+    </script>
+</body>
+</html>
